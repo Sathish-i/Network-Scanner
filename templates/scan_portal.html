@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Network Scan Portal</h1>
+        <label><input type="radio" name="scanType" value="basic" checked> Basic Scan</label>
+        <label><input type="radio" name="scanType" value="advanced"> Advanced Scan</label>
+        
+        <input type="text" id="ipAddress" placeholder="Enter IP Address">
+        <label><input type="checkbox" id="fullNetwork"> Full Network Scan</label>
+        
+        <button id="startScan">Start Scan</button>
+        <div id="confirmation" class="hidden">
+            <p id="scanDetails"></p>
+            <button id="confirmScan">Confirm</button>
+            <button id="cancelScan">Cancel</button>
+        </div>
+        <div id="results"></div>
+    </div>
+</body>
+</html>
