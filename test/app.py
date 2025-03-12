@@ -1,23 +1,23 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
 import subprocess
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
-    scan_result = ""
-    if request.method == 'POST':
-        target = request.form.get('target')
-        scan_type = request.form.get('scan_type')
+    return render_template('index.html')
+
+@socketio.on('start_scan')
+def handle_scan():
+    try:
+        process = subprocess.Popen(['netdiscover', '-r', '192.168.1.0/24'], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
-        if target:
-            command = ["nmap", scan_type, target]
-            try:
-                scan_result = subprocess.check_output(command, text=True)
-            except subprocess.CalledProcessError as e:
-                scan_result = f"Error: {e.output}"
-    
-    return render_template('index.html', scan_result=scan_result)
+        for line in iter(process.stdout.readline, ''):
+            socketio.emit('scan_output', {'data': line.strip()})
+    except Exception as e:
+        socketio.emit('scan_output', {'data': f'Error: {str(e)}'})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
