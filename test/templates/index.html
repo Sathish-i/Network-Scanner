@@ -1,21 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nmap Scanner</title>
 </head>
 <body>
     <h1>Nmap Scanner</h1>
-    <form method="POST">
-        <label for="target">Target IP/Hostname:</label>
+    <form method="post">
+        <label for="target">Target IP/Domain:</label>
         <input type="text" id="target" name="target" required>
-        <button type="submit">Scan</button>
+        
+        <label for="scan_type">Scan Type:</label>
+        <select id="scan_type" name="scan_type">
+            <option value="-sS">SYN Scan</option>
+            <option value="-sT">TCP Connect Scan</option>
+            <option value="-sV">Service Version Scan</option>
+            <option value="-O">OS Detection</option>
+        </select>
+        
+        <button type="submit">Start Scan</button>
     </form>
-
+    
     {% if scan_result %}
-    <h2>Scan Results:</h2>
-    <pre>{{ scan_result }}</pre>
+        <h2>Scan Results:</h2>
+        <pre>{{ scan_result }}</pre>
     {% endif %}
 </body>
 </html>
