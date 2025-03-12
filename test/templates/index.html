@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nmap Scanner</title>
+</head>
+<body>
+    <h1>Nmap Scanner</h1>
+    <form method="POST">
+        <label for="target">Target IP/Hostname:</label>
+        <input type="text" id="target" name="target" required>
+        <button type="submit">Scan</button>
+    </form>
+
+    {% if scan_result %}
+    <h2>Scan Results:</h2>
+    <pre>{{ scan_result }}</pre>
+    {% endif %}
+</body>
+</html>
