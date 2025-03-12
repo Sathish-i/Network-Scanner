@@ -1,27 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const fullNetworkCheckbox = document.getElementById("fullNetwork");
-    const ipAddressInput = document.getElementById("ipAddress");
-    const startScanButton = document.getElementById("startScan");
-    const confirmationDiv = document.getElementById("confirmation");
-    const scanDetails = document.getElementById("scanDetails");
-    const confirmScanButton = document.getElementById("confirmScan");
-    const cancelScanButton = document.getElementById("cancelScan");
+    const socket = io();  // Connect to WebSocket
     const resultsDiv = document.getElementById("results");
 
-    fullNetworkCheckbox.addEventListener("change", () => {
-        ipAddressInput.disabled = fullNetworkCheckbox.checked;
+    socket.on("scan_update", (data) => {
+        const lineElement = document.createElement("p");
+        lineElement.textContent = data.line;
+        resultsDiv.appendChild(lineElement);
     });
 
-    startScanButton.addEventListener("click", () => {
+    document.getElementById("startScan").addEventListener("click", () => {
         const scanType = document.querySelector("input[name='scanType']:checked").value;
-        const targetIP = ipAddressInput.value;
-        const fullNetwork = fullNetworkCheckbox.checked;
-        
-        scanDetails.textContent = `Scan Type: ${scanType.toUpperCase()}${fullNetwork ? " (Full Network)" : ""}`;
-        confirmationDiv.classList.remove("hidden");
-    });
+        const targetIP = document.getElementById("ipAddress").value;
+        const fullNetwork = document.getElementById("fullNetwork").checked;
 
-    cancelScanButton.addEventListener("click", () => {
-        confirmationDiv.classList.add("hidden");
+        resultsDiv.innerHTML = "";  // Clear previous results
+
+        fetch("/scan", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ scanType, targetIP, fullNetwork })
+        }).then(response => response.json())
+          .then(data => {
+              const downloadLink = document.createElement("a");
+              downloadLink.href = data.downloadLink;
+              downloadLink.textContent = "Download Full Scan Results";
+              resultsDiv.appendChild(downloadLink);
+          });
     });
 });
