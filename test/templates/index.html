@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Nmap Scanner</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netdiscover Scan</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
 </head>
 <body>
-    <h1>Nmap Scanner</h1>
-    <form method="post">
-        <label for="target">Target IP/Domain:</label>
-        <input type="text" id="target" name="target" required>
-        
-        <label for="scan_type">Scan Type:</label>
-        <select id="scan_type" name="scan_type">
-            <option value="-sS">SYN Scan</option>
-            <option value="-sT">TCP Connect Scan</option>
-            <option value="-sV">Service Version Scan</option>
-            <option value="-O">OS Detection</option>
-        </select>
-        
-        <button type="submit">Start Scan</button>
-    </form>
-    
-    {% if scan_result %}
-        <h2>Scan Results:</h2>
-        <pre>{{ scan_result }}</pre>
-    {% endif %}
+    <button id="startScan">Hosts</button>
+    <button onclick="window.location.href='/basic'">Basic</button>
+    <button onclick="window.location.href='/advanced'">Advanced</button>
+
+    <pre id="output"></pre>
+
+    <script>
+        var socket = io();
+
+        document.getElementById('startScan').addEventListener('click', function() {
+            socket.emit('start_scan');
+        });
+
+        socket.on('scan_output', function(msg) {
+            document.getElementById('output').textContent += msg.data + '\n';
+        });
+    </script>
 </body>
 </html>
