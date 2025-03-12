@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, jsonify, send_file
+from flask_socketio import SocketIO
 import subprocess
 import os
 import datetime
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 RESULTS_DIR = "results"
 os.makedirs(RESULTS_DIR, exist_ok=True)
 
@@ -17,14 +19,20 @@ def run_nmap_scan(target, scan_type, custom_options=None):
         command = ["nmap"] + (custom_options.split() if custom_options else []) + [target]
     
     with open(result_file, "w") as f:
-        subprocess.run(command, stdout=f, stderr=subprocess.STDOUT)
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        for line in process.stdout:
+            socketio.emit("Scan update", {"line": line.strip()})
+            f.write(line)
     
     return result_file
 
 @app.route('/')
 def home():
     return render_template('index.html')
-
+@app.route('/scan_portal')
+def scan_portal():
+    return render_template('scan_portal.html')
+    
 @app.route('/scan', methods=['POST'])
 def scan():
     data = request.json
