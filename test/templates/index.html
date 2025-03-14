@@ -4,14 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netdiscover Scan</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <link rel="stylesheet" href="./index.css">
 </head>
 <body>
     <button id="startScan">Hosts</button>
-    <button onclick="window.location.href='/basic'">Basic</button>
-    <button onclick="window.location.href='/advanced'">Advanced</button>
-
+   
+    <div class="container">
+        
     <pre id="output"></pre>
+    <div class="basic">
+        <button onclick="window.location.href='/basic'">Basic</button>
+        <button onclick="window.location.href='/advanced'">Advanced</button>
+    </div>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
 
     <script>
         var socket = io();
@@ -24,5 +33,6 @@
             document.getElementById('output').textContent += msg.data + '\n';
         });
     </script>
+
 </body>
 </html>
