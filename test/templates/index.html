@@ -22,7 +22,6 @@
         var outputArea = document.getElementById('output');
 
         function startScan() {
-            outputArea.textContent = "Starting scan...\n";
             socket.emit('start_scan');
         }
 
