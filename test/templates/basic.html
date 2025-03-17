@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Scan</title>
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Basic Scan</h2>
+        <input type="text" id="ip_address" placeholder="Enter IP address or domain">
+        <label><input type="checkbox" id="whole_network"> Whole Network</label>
+        <button id="startScan">Start Scan</button>
+        <p id="status"></p>
+        <a id="downloadLink" style="display:none;" href="/download_results" download="scan_results.txt">
+            <button>Download Results</button>
+        </a>
+    </div>
+
+    <script>
+        document.getElementById('startScan').addEventListener('click', function() {
+            var ipInput = document.getElementById('ip_address').value;
+            var wholeNetwork = document.getElementById('whole_network').checked;
+            var statusMsg = document.getElementById('status');
+
+            if (!wholeNetwork && !/^(?:\d{1,3}\.){3}\d{1,3}$|^(?!-)(?:[a-zA-Z0-9-]{1,63}\.?)+(?:[a-zA-Z]{2,})$/.test(ipInput)) {
+                alert("Invalid IP address or domain name");
+                return;
+            }
+
+            statusMsg.textContent = "Scanning...";
+            fetch('/start_basic_scan', {
+                method: 'POST',
+                body: new URLSearchParams({ ip_address: ipInput, whole_network: wholeNetwork }),
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert("Error: " + data.error);
+                } else {
+                    statusMsg.textContent = "Scan complete!";
+                    document.getElementById('downloadLink').style.display = 'block';
+                }
+            })
+            .catch(error => alert("Request failed: " + error));
+        });
+    </script>
+</body>
+</html>
