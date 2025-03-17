@@ -4,35 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netdiscover Scan</title>
-    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/style.css">
 </head>
 <body>
-    <button id="startScan">Hosts</button>
-   
     <div class="container">
-        
-    <pre id="output"></pre>
-    <div class="basic">
-        <button onclick="window.location.href='/basic'">Basic</button>
-        <button onclick="window.location.href='/advanced'">Advanced</button>
+        <pre id="output"></pre>
+        <button id="restartScan">Restart Scan</button>
+        <div class="basic">
+            <button onclick="window.location.href='/basic'">Basic</button>
+            <button onclick="window.location.href='/advanced'">Advanced</button>
+        </div>
     </div>
-    </div>
-
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
-
     <script>
         var socket = io();
+        var outputArea = document.getElementById('output');
 
-        document.getElementById('startScan').addEventListener('click', function() {
+        function startScan() {
+            outputArea.textContent = "Starting scan...\n";
             socket.emit('start_scan');
-        });
+        }
+
+        window.onload = startScan;
+        document.getElementById('restartScan').addEventListener('click', startScan);
 
         socket.on('scan_output', function(msg) {
-            document.getElementById('output').textContent += msg.data + '\n';
+            outputArea.textContent += msg.data + '\n';
+            outputArea.scrollTop = outputArea.scrollHeight;
+        });
+
+        socket.on('scan_complete', function() {
+            outputArea.textContent += "\nScan complete!";
         });
     </script>
-
 </body>
 </html>
