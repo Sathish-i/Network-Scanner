@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, send_file, jsonify
 from flask_socketio import SocketIO
+from flask import send_from_directory
 import subprocess
 import eventlet
 import re
@@ -22,6 +23,10 @@ def is_valid_ip_or_domain(value):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/static/css/index.css')
+def static_files(index.css):
+    return send_from_directory('static',index.css)
 
 @app.route('/basic')
 def basic_scan():
