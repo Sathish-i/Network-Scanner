@@ -40,6 +40,9 @@ def handle_scan():
             for line in iter(process.stdout.readline, ''):
                 if line.strip():
                     socketio.emit('scan_output', {'data': line.strip()})
+                    if not first_line_skipped:
+                        first_line_skipped = True
+                        continue
                     f.write(line.strip() + "\n")
                     eventlet.sleep(0.1)
         socketio.emit('scan_complete')
