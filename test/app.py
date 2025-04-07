@@ -62,6 +62,11 @@ def start_basic_scan():
         process = subprocess.run(scan_command, capture_output=True, text=True)
         
         with open(RESULT_FILE, 'w') as f:
+            first_line_skipped = False
+            for line in iter(process.stdout.readline, ''):
+                if not first_line_skipped:
+                    first_line_skipped = True
+                    continue
             f.write(process.stdout)
         
         return jsonify({'success': True})
