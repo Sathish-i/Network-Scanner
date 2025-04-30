@@ -24,10 +24,6 @@ def is_valid_ip_or_domain(value):
 def index():
     return render_template('index.html')
 
-@app.route('/static/css/index.css')
-def static_files(index.css):
-    return send_from_directory('static',index.css)
-
 @app.route('/basic')
 def basic_scan():
     return render_template('basic.html')
@@ -40,9 +36,6 @@ def handle_scan():
             for line in iter(process.stdout.readline, ''):
                 if line.strip():
                     socketio.emit('scan_output', {'data': line.strip()})
-                    if not first_line_skipped:
-                        first_line_skipped = True
-                        continue
                     f.write(line.strip() + "\n")
                     eventlet.sleep(0.1)
         socketio.emit('scan_complete')
@@ -62,11 +55,6 @@ def start_basic_scan():
         process = subprocess.run(scan_command, capture_output=True, text=True)
         
         with open(RESULT_FILE, 'w') as f:
-            first_line_skipped = False
-            for line in iter(process.stdout.readline, ''):
-                if not first_line_skipped:
-                    first_line_skipped = True
-                    continue
             f.write(process.stdout)
         
         return jsonify({'success': True})
